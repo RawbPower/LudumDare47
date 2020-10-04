@@ -37,10 +37,13 @@ public class Entity : MonoBehaviour
     public float checkRadius;
     public LayerMask whatIsGround;
     private Ring ring;
+    public Ring currentLevel;
 
     public float freezeTime;
     private float freezeTimer;
     private bool freeze;
+    private bool pressFreeze;
+
     private bool win;
     public GameObject winText;
 
@@ -51,6 +54,9 @@ public class Entity : MonoBehaviour
     private bool onPlatform;
 
     private Rigidbody2D rb;
+
+    public Animator animator;
+    public Animator freezeAnimator;
 
     private void Awake()
     {
@@ -90,6 +96,7 @@ public class Entity : MonoBehaviour
 
             if (isGrounded)
             {
+                animator.SetBool("IsJumping", false);
                 ring = ground.gameObject.GetComponent<Ring>();
                 if (ring == null)
                 {
@@ -110,15 +117,18 @@ public class Entity : MonoBehaviour
 
             if (Input.GetKey(KeyCode.Space) && isGrounded)
             {
-                Debug.Log("Jump");
+                animator.SetBool("IsJumping", true);
                 acceleration -= jump;
             }
 
             velocity += acceleration * Time.deltaTime;
 
-            GetComponent<SpriteRenderer>().flipX = (angleVelocity < 0.0f);
+            if (move != 0.0f)
+            {
+                GetComponent<SpriteRenderer>().flipX = (move < 0.0f);
+            }
 
-            if (onPlatform)
+            if (onPlatform && !Input.GetKey(KeyCode.Space))
             {
                 acceleration = 0.0f;
                 velocity = 0.0f;
@@ -145,6 +155,8 @@ public class Entity : MonoBehaviour
                     }
                 }
             }
+
+            animator.SetFloat("Speed", Mathf.Abs(move));
 
             radius += velocity * Time.deltaTime;
             angle += angleVelocity * Time.deltaTime;
@@ -181,27 +193,41 @@ public class Entity : MonoBehaviour
 
     private void Update()
     {
+        freezeAnimator.SetBool("Freeze", false);
+        freezeAnimator.SetBool("Unfreeze", false);
+
         if (!win)
         {
             Collider2D hit = Physics2D.OverlapCircle(scan.position, scanRadius, whatIsGround);
+
+            if (freezeTimer < freezeTime)
+            {
+                freezeTimer += Time.deltaTime;
+            }
 
             if (Input.GetKeyDown(KeyCode.X))
             {
                 freezeTimer = 0.0f;
                 freeze = true;
-                if (hit)
+                pressFreeze = true;
+                freezeAnimator.ResetTrigger("Unfreeze");
+                freezeAnimator.SetTrigger("Freeze");
+            }
+
+            if (hit && freezeTimer > freezeTime && pressFreeze)
+            {
+                if (hit.gameObject.CompareTag("Freezable") && !hit.gameObject.GetComponent<FreezeBlocks>().GetIsFrozen())
                 {
-                    if (hit.gameObject.CompareTag("Freezable") && !hit.gameObject.GetComponent<FreezeBlocks>().GetIsFrozen())
-                    {
-                        hit.gameObject.GetComponent<FreezeBlocks>().SetIsFrozen(true);
-                    }
+                    hit.gameObject.GetComponent<FreezeBlocks>().SetIsFrozen(true);
                 }
+                pressFreeze = false;
             }
 
             if (Input.GetKeyDown(KeyCode.Z))
             {
-                freezeTimer = 0.0f;
                 freeze = false;
+                freezeAnimator.ResetTrigger("Freeze");
+                freezeAnimator.SetTrigger("Unfreeze");
                 if (hit)
                 {
                     if (hit.gameObject.CompareTag("Freezable") && hit.gameObject.GetComponent<FreezeBlocks>().GetIsFrozen())
@@ -213,31 +239,14 @@ public class Entity : MonoBehaviour
         }
     }
 
-    private void OnDrawGizmos()
-    {
-        if (freezeTimer < freezeTime)
-        {
-            if (freeze)
-            {
-                Gizmos.color = Color.yellow;
-            }
-            else
-            {
-                Gizmos.color = Color.cyan;
-            }
-            Gizmos.DrawWireSphere(scan.position, scanRadius);
-            freezeTimer += Time.deltaTime;
-        }
-    }
-
     private void OnCollisionStay2D(Collision2D collision)
     {
-        if (!Input.GetKey(KeyCode.Space))
+        if (!Input.GetKey(KeyCode.Space) && isGrounded)
         {
             onPlatform = true;
             platform = collision.collider.gameObject;
         }
-        else
+        else if (Input.GetKey(KeyCode.Space) || isGrounded)
         {
             onPlatform = false;
         }
@@ -258,7 +267,7 @@ public class Entity : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ring"))
         {
-            Debug.Log(collision.gameObject.name);
+            // New Ring
             collision.gameObject.GetComponent<EdgeCollider2D>().enabled = true;
             collision.gameObject.GetComponent<SpriteRenderer>().color = new Color(0.05490196f, 0.09803922f, 0.8784314f, 1.0f);
             BoxCollider2D[] colliders = collision.gameObject.GetComponentsInChildren<BoxCollider2D>();
@@ -269,16 +278,35 @@ public class Entity : MonoBehaviour
                 bc.enabled = true;
             }
 
+            resetTransform.position.y += 5.0f;
+
+            currentLevel.ResetRing(timer.GetComponent<LoopClock>());
+
+            // Old Ring
+            currentLevel.gameObject.GetComponent<EdgeCollider2D>().enabled = false;
+            currentLevel.gameObject.GetComponent<SpriteRenderer>().color = new Color(0.2910f, 0.3149f, 0.5660f, 1.0f);
+            BoxCollider2D[] oldColliders = currentLevel.gameObject.GetComponentsInChildren<BoxCollider2D>();
+
+            foreach (BoxCollider2D bc in oldColliders)
+            {
+                bc.gameObject.GetComponent<SpriteRenderer>().color = new Color(0.2910f, 0.3149f, 0.5660f, 1.0f);
+                bc.enabled = false;
+            }
+
             Camera camera = Camera.main;
             if (camera != null)
             {
                 var brain = (camera == null) ? null : camera.GetComponent<CinemachineBrain>();
                 var vcam = (brain == null) ? null : brain.ActiveVirtualCamera as CinemachineVirtualCamera;
                 if (vcam != null)
-                    camera.GetComponent<CamMovement>().SetDesiredOrthographicSize(6.0f * collision.gameObject.GetComponent<Ring>().radius);
+                {
+                    camera.GetComponent<CamMovement>().SetDesiredOrthographicSize(3.5f * collision.gameObject.GetComponent<Ring>().radius);
+                    if (collision.gameObject.GetComponent<Ring>().radius == 1.0f)
+                    {
+                        camera.GetComponent<CamMovement>().SetDesiredOrthographicSize(5.0f);
+                    }
+                }
             }
-
-            resetTransform.position.y += 5.0f;
 
             collision.gameObject.GetComponent<CircleCollider2D>().enabled = false;
 
@@ -286,7 +314,10 @@ public class Entity : MonoBehaviour
 
             timer.GetComponent<LoopClock>().level = collision.gameObject.GetComponent<Ring>();
 
+            currentLevel = collision.gameObject.GetComponent<Ring>();
+
             collision.gameObject.GetComponent<Ring>().ResetRing(timer.GetComponent<LoopClock>());
+
         }
         else if (collision.gameObject.CompareTag("Portal"))
         {

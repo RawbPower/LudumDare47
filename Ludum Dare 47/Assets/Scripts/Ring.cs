@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Ring : MonoBehaviour
 {
@@ -53,6 +54,10 @@ public class Ring : MonoBehaviour
         }
         player.localPosition = player.GetComponent<Entity>().resetTransform.position;
         player.localRotation = player.GetComponent<Entity>().resetTransform.rotation;
+
+        clock.gameObject.GetComponent<Image>().sprite = clock.gameObject.GetComponent<LoopClock>().sprites[(int)radius-1];
+        clock.transform.GetChild(0).GetComponent<Image>().sprite = clock.gameObject.GetComponent<LoopClock>().sprites[(int)radius - 1];
+
         clock.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(radius * 1140.0f, radius * 1140.0f);
         clock.transform.GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(radius * 1140.0f, radius * 1140.0f);
     }

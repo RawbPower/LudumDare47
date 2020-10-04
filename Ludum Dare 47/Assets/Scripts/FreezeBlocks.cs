@@ -23,7 +23,7 @@ public class FreezeBlocks : MonoBehaviour
     {
         if (GetIsFrozen())
         {
-            GetComponent<SpriteRenderer>().color = Color.grey;
+            GetComponent<SpriteRenderer>().color = new Color(1.0f, 0.7686f, 0.2313f, 1.0f);
             transform.parent = null;
         }
         else if (!GetIsFrozen() && gameObject.GetComponent<BoxCollider2D>().enabled)

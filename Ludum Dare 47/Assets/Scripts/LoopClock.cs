@@ -10,6 +10,7 @@ public class LoopClock : MonoBehaviour
 
     public Ring level;
     public Image mask;
+    public Sprite[] sprites;
 
     // Start is called before the first frame update
     void Start()
