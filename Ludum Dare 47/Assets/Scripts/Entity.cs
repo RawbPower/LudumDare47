@@ -23,8 +23,6 @@ public class Entity : MonoBehaviour
     private float acceleration = 0.0f;
     private float velocity = 0.0f;
 
-    private bool freeze;
-
     private float angleAcceleration = 0.0f;
     private float angleVelocity = 0.0f;
     private float angleRelVel;
@@ -41,6 +39,7 @@ public class Entity : MonoBehaviour
 
     public float freezeTime;
     private float freezeTimer;
+    private bool freeze;
 
     public ResetTransform resetTransform;
 
@@ -160,11 +159,25 @@ public class Entity : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.X))
         {
             freezeTimer = 0.0f;
+            freeze = true;
             if (hit)
             {
-                if (hit.gameObject.CompareTag("Freezable"))
+                if (hit.gameObject.CompareTag("Freezable") && !hit.gameObject.GetComponent<FreezeBlocks>().GetIsFrozen())
                 {
                     hit.gameObject.GetComponent<FreezeBlocks>().SetIsFrozen(true);
+                }
+            }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            freezeTimer = 0.0f;
+            freeze = false;
+            if (hit)
+            {
+                if (hit.gameObject.CompareTag("Freezable") && hit.gameObject.GetComponent<FreezeBlocks>().GetIsFrozen())
+                {
+                    hit.gameObject.GetComponent<FreezeBlocks>().SetIsFrozen(false);
                 }
             }
         }
@@ -173,8 +186,15 @@ public class Entity : MonoBehaviour
     private void OnDrawGizmos()
     {
         if (freezeTimer < freezeTime)
-        { 
-            Gizmos.color = Color.yellow;
+        {
+            if (freeze)
+            {
+                Gizmos.color = Color.yellow;
+            }
+            else
+            {
+                Gizmos.color = Color.cyan;
+            }
             Gizmos.DrawWireSphere(scan.position, scanRadius);
             freezeTimer += Time.deltaTime;
         }
@@ -234,6 +254,6 @@ public class Entity : MonoBehaviour
 
         timer.GetComponent<LoopClock>().level = collision.gameObject.GetComponent<Ring>();
 
-        collision.gameObject.GetComponent<Ring>().ResetRing();
+        collision.gameObject.GetComponent<Ring>().ResetRing(timer.GetComponent<LoopClock>());
     }
 }

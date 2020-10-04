@@ -365,7 +365,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3216518787464721839, guid: f6f29c62706172945b3976767d7ae48f, type: 3}
       propertyPath: m_Name
-      value: Ring (4)
+      value: Ring 1
       objectReference: {fileID: 0}
     - target: {fileID: 3216518787464721839, guid: f6f29c62706172945b3976767d7ae48f, type: 3}
       propertyPath: m_Layer
@@ -1069,7 +1069,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3216518787464721839, guid: f6f29c62706172945b3976767d7ae48f, type: 3}
       propertyPath: m_Name
-      value: Ring (1)
+      value: Ring 5
       objectReference: {fileID: 0}
     - target: {fileID: 3216518787464721839, guid: f6f29c62706172945b3976767d7ae48f, type: 3}
       propertyPath: m_Layer
@@ -2735,7 +2735,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3216518787464721839, guid: f6f29c62706172945b3976767d7ae48f, type: 3}
       propertyPath: m_Name
-      value: Ring (2)
+      value: Ring 3
       objectReference: {fileID: 0}
     - target: {fileID: 3216518787464721839, guid: f6f29c62706172945b3976767d7ae48f, type: 3}
       propertyPath: m_Layer
@@ -3532,7 +3532,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3216518787464721839, guid: f6f29c62706172945b3976767d7ae48f, type: 3}
       propertyPath: m_Name
-      value: Ring (3)
+      value: Ring 2
       objectReference: {fileID: 0}
     - target: {fileID: 3216518787464721839, guid: f6f29c62706172945b3976767d7ae48f, type: 3}
       propertyPath: m_Layer
@@ -3982,7 +3982,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3216518787464721839, guid: f6f29c62706172945b3976767d7ae48f, type: 3}
       propertyPath: m_Name
-      value: Ring
+      value: Ring 4
       objectReference: {fileID: 0}
     - target: {fileID: 3216518787464721839, guid: f6f29c62706172945b3976767d7ae48f, type: 3}
       propertyPath: m_Layer

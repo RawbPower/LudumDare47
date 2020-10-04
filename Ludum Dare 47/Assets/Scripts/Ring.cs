@@ -40,7 +40,7 @@ public class Ring : MonoBehaviour
 
     }
 
-    public void ResetRing()
+    public void ResetRing(LoopClock clock)
     {
         resetting = true;
         angle = 0.0f;
@@ -53,6 +53,8 @@ public class Ring : MonoBehaviour
         }
         player.localPosition = player.GetComponent<Entity>().resetTransform.position;
         player.localRotation = player.GetComponent<Entity>().resetTransform.rotation;
+        clock.gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(radius * 1140.0f, radius * 1140.0f);
+        clock.transform.GetChild(0).GetComponent<RectTransform>().sizeDelta = new Vector2(radius * 1140.0f, radius * 1140.0f);
     }
 
     public float GetAngle()

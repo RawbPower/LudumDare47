@@ -1,9 +1,8 @@
-﻿using System.Collections;
+﻿using UnityEngine.UI;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
-[ExecuteInEditMode()]
 public class LoopClock : MonoBehaviour
 {
     public float maximum;
@@ -21,7 +20,17 @@ public class LoopClock : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        current = Mathf.Abs(level.GetAngle()); 
+        current = level.GetAngle(); 
+        if (current < 0.0f)
+        {
+            transform.GetChild(0).GetComponent<Image>().fillClockwise = true;
+        }
+        else 
+        {
+            transform.GetChild(0).GetComponent<Image>().fillClockwise = false;
+        }
+
+        current = Mathf.Abs(current);
         GetCurrentFill();
     }
 
@@ -31,7 +40,7 @@ public class LoopClock : MonoBehaviour
         mask.fillAmount = fillAmount;
         if (fillAmount > 1.0f)
         {
-            level.ResetRing();
+            level.ResetRing(this);
         }
     }
 }
