@@ -139,7 +139,7 @@ public class Entity : MonoBehaviour
                 velocity = Mathf.Sign(velocity) * maxSpeed;
             }
 
-            angleVelocity = move * moveSpeed * Time.deltaTime;
+            angleVelocity = move * (moveSpeed/currentLevel.GetComponent<Ring>().radius) * Time.deltaTime;
 
             if (onPlatform && angleVelocity == 0.0f)
             {
