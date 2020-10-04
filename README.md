@@ -1,2 +1,2 @@
 # LudumDare47
-Submission for Ludum Dare 47 "Stuck in a Loop"
+Submission for Ludum Dare 47 Theme : "Stuck in a Loop"
