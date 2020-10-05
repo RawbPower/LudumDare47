@@ -207,6 +207,7 @@ public class Entity : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.X))
             {
+                FindObjectOfType<AudioManager>().Play("Freeze");
                 freezeTimer = 0.0f;
                 freeze = true;
                 pressFreeze = true;
@@ -225,6 +226,7 @@ public class Entity : MonoBehaviour
 
             if (Input.GetKeyDown(KeyCode.Z))
             {
+                FindObjectOfType<AudioManager>().Play("Unfreeze");
                 freeze = false;
                 freezeAnimator.ResetTrigger("Freeze");
                 freezeAnimator.SetTrigger("Unfreeze");
@@ -267,6 +269,8 @@ public class Entity : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ring"))
         {
+            FindObjectOfType<AudioManager>().Play("Ding");
+
             // New Ring
             collision.gameObject.GetComponent<EdgeCollider2D>().enabled = true;
             collision.gameObject.GetComponent<SpriteRenderer>().color = new Color(0.05490196f, 0.09803922f, 0.8784314f, 1.0f);
@@ -303,7 +307,9 @@ public class Entity : MonoBehaviour
                     camera.GetComponent<CamMovement>().SetDesiredOrthographicSize(3.5f * collision.gameObject.GetComponent<Ring>().radius);
                     if (collision.gameObject.GetComponent<Ring>().radius == 1.0f)
                     {
-                        camera.GetComponent<CamMovement>().SetDesiredOrthographicSize(5.0f);
+                        vcam.transform.position = new Vector3(0.0f, 0.0f, -10.0f);
+                        camera.GetComponent<CamMovement>().SetDesiredOrthographicSize(7.0f);
+                        vcam.Follow = null;
                     }
                 }
             }
@@ -322,7 +328,29 @@ public class Entity : MonoBehaviour
         else if (collision.gameObject.CompareTag("Portal"))
         {
             freezeTimer = 0.0f;
+            FindObjectOfType<AudioManager>().Play("Victory");
+            Camera camera = Camera.main;
+            if (camera != null)
+            {
+                var brain = (camera == null) ? null : camera.GetComponent<CinemachineBrain>();
+                var vcam = (brain == null) ? null : brain.ActiveVirtualCamera as CinemachineVirtualCamera;
+                if (vcam != null)
+                {
+                    vcam.Follow = null;
+                }
+            }
+
             win = true;
         }
+    }
+
+    public float GetAngle()
+    {
+        return angle;
+    }
+
+    public void SetAngle(float a)
+    {
+        angle = a;
     }
 }

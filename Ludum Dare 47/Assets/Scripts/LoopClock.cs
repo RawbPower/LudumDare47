@@ -41,6 +41,7 @@ public class LoopClock : MonoBehaviour
         mask.fillAmount = fillAmount;
         if (fillAmount > 1.0f)
         {
+            FindObjectOfType<AudioManager>().Play("Lose");
             level.ResetRing(this);
         }
     }
