@@ -58,8 +58,11 @@ public class Entity : MonoBehaviour
     public Animator animator;
     public Animator freezeAnimator;
 
+    public Canvas endScreen;
+
     private void Awake()
     {
+        endScreen.enabled = false;
         win = false;
         resetTransform = new ResetTransform(transform);
         rb = GetComponent<Rigidbody2D>();
@@ -339,7 +342,7 @@ public class Entity : MonoBehaviour
                     vcam.Follow = null;
                 }
             }
-
+            endScreen.enabled = true;
             win = true;
         }
     }
